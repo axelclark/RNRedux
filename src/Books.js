@@ -1,14 +1,36 @@
 import React from "react"
 import {
   Text,
+  TextInput,
+  TouchableOpacity,
   View,
   ScrollView,
   StyleSheet
 } from "react-native"
 
+import { addBook } from "./actions"
 import { connect } from "react-redux"
 
+const initialState = {
+  name: "",
+  author: ""
+}
+
 class Books extends React.Component {
+  state = initialState
+
+  updateInput = (key, value) => {
+    this.setState({
+      ...this.state,
+      [key]: value
+    })
+  }
+
+  addBook = () => {
+    this.props.dispatchAddBook(this.state)
+    this.setState(initialState)
+  }
+
   render() {
     const { books } = this.props
 
@@ -28,6 +50,27 @@ class Books extends React.Component {
             ))
           }
         </ScrollView>
+        <View style={styles.inputContainer}>
+          <View style={styles.inputWrapper}>
+          <TextInput
+            value={this.state.name}
+            onChangeText={value => this.updateInput("name", value)}
+            style={styles.input}
+            placeholder="Book name"
+          />
+          <TextInput
+            value={this.state.author}
+            onChangeText={value => this.updateInput("author", value)}
+            style={styles.input}
+            placeholder="Author name"
+          />
+          </View>
+          <TouchableOpacity onPress={this.addBook} >
+            <View style={styles.addButtonContainer}>
+              <Text style={styles.addButton}>+</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     )
   }
@@ -54,11 +97,48 @@ const styles = StyleSheet.create({
   author: {
     fontSize: 14,
     color: '#999'
+  },
+  inputContainer: {
+    padding: 10,
+    backgroundColor: '#ffffff',
+    borderTopColor: '#ededed',
+    borderTopWidth: 1,
+    flexDirection: 'row',
+    height: 100
+  },
+  inputWrapper: {
+    flex: 1 },
+  input: {
+    height: 44,
+    padding: 7,
+    backgroundColor: '#ededed',
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 10,
+    flex: 1,
+    marginBottom: 5
+  },
+  addButton: {
+    fontSize: 28,
+    lineHeight: 28
+  },
+  addButtonContainer: {
+    width: 80,
+    height: 80,
+    backgroundColor: '#ededed',
+    marginLeft: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20
   }
 })
 
+const mapDispatchToProps = {
+  dispatchAddBook: (book) => addBook(book)
+}
+
 const mapStateToProps = (state) => ({
-      books: state.bookReducer.books
+  books: state.bookReducer.books
 })
 
-export default connect(mapStateToProps)(Books)
+export default connect(mapStateToProps, mapDispatchToProps)(Books)
