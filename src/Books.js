@@ -8,7 +8,7 @@ import {
   StyleSheet
 } from "react-native"
 
-import { addBook } from "./actions"
+import { addBook, removeBook } from "./actions"
 import { connect } from "react-redux"
 
 const initialState = {
@@ -31,6 +31,10 @@ class Books extends React.Component {
     this.setState(initialState)
   }
 
+  removeBook = (book) => {
+    this.props.dispatchRemoveBook(book)
+  }
+
   render() {
     const { books } = this.props
 
@@ -46,6 +50,7 @@ class Books extends React.Component {
               <View style={styles.book} key={index}>
                 <Text style={styles.name}>{book.name}</Text>
                 <Text style={styles.author}>{book.author}</Text>
+                <Text onPress={() => this.removeBook(book)}>Remove</Text>
               </View>
             ))
           }
@@ -134,7 +139,8 @@ const styles = StyleSheet.create({
 })
 
 const mapDispatchToProps = {
-  dispatchAddBook: (book) => addBook(book)
+  dispatchAddBook: (book) => addBook(book),
+  dispatchRemoveBook: (book) => removeBook(book)
 }
 
 const mapStateToProps = (state) => ({
